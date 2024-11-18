@@ -2,6 +2,7 @@ import socket
 import sys
 import json
 import os
+import unittest
 
 # Create a socket
 def createSocket():
@@ -16,10 +17,12 @@ def connectToServer(sock, server_address):
         print(msg)
         sys.exit(1)
 
-def load_json(file_path):
+def loadJsonDict(file_path):
     with open(file_path) as json_file:
-        text = json.load(json_file)
-        return json.dumps(text)
+        return json.load(json_file)
+
+def convertDictToJsonText(text):
+    return json.dumps(text)
 
 
 def sendJsonToServer(sock, json_message):
@@ -47,41 +50,52 @@ def receiveJsonFromServer(sock):
     except(TimeoutError):
         print('Timeout error')
 
+def convertResponseJsonToDict(response):
+    response_json = response.decode('utf-8')
+    return json.loads(response_json)
+
 def displayResponseJson(response):
-    responce_json = response.decode('utf-8')
-    responce_dict = json.loads(responce_json)
-    print('Received {}'.format(responce_dict))
+    print('Received {}'.format(response))
 
-def main():
-
-    # get test json file path list
-    test_json_files = os.listdir('test')
-    print('test json files: {}'.format(test_json_files))
-    
-    for file in test_json_files:
-        print('test_json_file: {}'.format(file))
-
+def remoteProcedureProtocol(server_address, json_path):
     sock = createSocket()
 
-    server_address = ('tmp/socket_file')
     connectToServer(sock, server_address)
 
     try:
         # load json message
-        json_message = load_json('test/subtruct.json')
+        json_dict = loadJsonDict(json_path)
+        json_message = convertDictToJsonText(json_dict)
+
         # Send data
         sendJsonToServer(sock, json_message)
 
         # Receive data
         response = receiveJsonFromServer(sock)
 
-        # Display the response
+        # Convert response to dict
+        response_dict = convertResponseJsonToDict(response)
+
+        # Display response
         displayResponseJson(response)
 
     # Close the socket
     finally:
         print('Closing socket')
         sock.close()
+    return response_dict
+
+def main():
+    server_address = ('tmp/socket_file')
+
+    # get test json file path list
+    test_json_files = os.listdir('test/input')
+    
+    for file in test_json_files:
+        test_file_path = os.path.join('test/input', file)
+        print('- test_json_file: {}'.format(test_file_path))
+        remoteProcedureProtocol(server_address, test_file_path)
+
 
 if __name__ == '__main__':
     main()
