@@ -3,8 +3,11 @@
 このプロジェクトは、PythonクライアントとNode.jsサーバーを使用してリモートプロシージャコール（RPC）を実装しています。クライアントはJSON形式のデータをサーバーに送信し、サーバーは指定された関数を実行して結果を返します。
 
 ## 仕様
+TCPを用いた通信を行い、AF_UNIX(UNIX Domain Socketとも呼ばれる. 同一マシン内の異なるプロセス間の通信に使用される
+)を使用。
+アドレスは`tmp/socket_file`を使用.
 
-## RequestとResponseの形式
+### RequestとResponseの形式
 - Request
 ```json
 {
@@ -23,7 +26,7 @@
    "id": 1
 }
 ```
-## サーバが提供するRPC関数
+### サーバが提供するRPC関数
 - subtract(int a, int b): 2つの整数a, b を入力して受け取り、その差を返す
 - floor(double x): 10 進数 x を最も近い整数に切り捨て、その結果を整数で返す
 - nroot(int n, int x): 方程式 rn = x における、r の値を計算する
@@ -31,13 +34,13 @@
 - validAnagram(string str1, string str2): 2 つの文字列を入力として受け取り，2 つの入力文字列が互いにアナグラムであるかどうかを示すブール値を返す
 - sort(string[] strArr): 文字列の配列を入力として受け取り、その配列をソートして、ソート後の文字列の配列を返す
 
-## Client Side
+### Client Side
 - 使用言語
     - Python
 - socketの実装
     - socketライブラリを使用
 
-## Server Side
+### Server Side
 - 使用言語
     - JavaScript (Node.js)
 - socketの実装
