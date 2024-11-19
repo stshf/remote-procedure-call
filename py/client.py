@@ -57,7 +57,7 @@ def convertResponseJsonToDict(response):
 def displayResponseJson(response):
     print('Received {}'.format(response))
 
-def remoteProcedureProtocol(server_address, json_path):
+def remoteProcedureCall(server_address, json_path):
     sock = createSocket()
 
     connectToServer(sock, server_address)
@@ -94,7 +94,7 @@ def main():
     for file in test_json_files:
         test_file_path = os.path.join('test/input', file)
         print('- test_json_file: {}'.format(test_file_path))
-        remoteProcedureProtocol(server_address, test_file_path)
+        remoteProcedureCall(server_address, test_file_path)
 
 
 if __name__ == '__main__':
